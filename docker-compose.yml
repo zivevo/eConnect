@@ -3,15 +3,17 @@ version: '3.8'
 services:
   frontend:
     build:
-      context: ./eConnect-frontend
+      context: ./frontend
       dockerfile: Dockerfile
+    image: econnect-frontend:latest
     ports:
       - "3000:3000"
 
   backend:
     build:
-      context: ./eConnect-backend
+      context: ./backend
       dockerfile: Dockerfile
+    image: econnect-backend:latest
     ports:
       - "3030:3030"
 

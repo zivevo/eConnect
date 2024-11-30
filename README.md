@@ -45,19 +45,11 @@ The central repository is structured as follows:
 Below is a categorized list of all associated repositories:
 
 ### Core Components
-1. **[Repo Name 1]** - [Brief description and purpose of the repo]  
-   Link: [Repository URL]
+1. **[eConnect-Backend]** - Clone the backend in to the central repo.
+   Link: git clone https://github.com/zivevo/eConnect-backend.git backend
 
-2. **[Repo Name 2]** - [Brief description and purpose of the repo]  
-   Link: [Repository URL]
-
-### Extensions and Plugins
-1. **[Repo Name 3]** - [Brief description and purpose of the repo]  
-   Link: [Repository URL]
-
-### Documentation and Resources
-1. **[Repo Name 4]** - [Brief description and purpose of the repo]  
-   Link: [Repository URL]
+2. **[eConnect-Frontend]** - Clone the backend in to the central repo.
+   Link: git clone https://github.com/zivevo/eConnect-frontend.git frontend
 
 ---
 
@@ -68,13 +60,24 @@ Below is a categorized list of all associated repositories:
    git clone https://github.com/your-organization/central-repo.git
    ```
 
-2. **Navigate to the desired sub-repository**  
-   Follow the links in the [Linked Repositories](#linked-repositories) section to explore or clone specific repositories.
+2. **[eConnect-Backend]** - Clone the backend in to the central repo.
+   ```bash
+   git clone https://github.com/zivevo/eConnect-backend.git backend
+   ```
 
-3. **Set up the environment**  
-   Refer to the README files in individual sub-repositories for specific setup instructions.
+3. **[eConnect-Frontend]** - Clone the backend in to the central repo.
+   ```bash
+   git clone https://github.com/zivevo/eConnect-frontend.git frontend
+   ```
 
-
+3. **Run the docker environment**
+   1. *Have Docker Desktop Installed*
+   2. First time start : 
+   ```bash   
+      docker-compose up #Depending on version
+      or
+      docker compose up #Depending on version
+   ```
 ---
 
 ## License
