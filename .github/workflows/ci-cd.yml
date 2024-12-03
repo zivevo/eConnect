@@ -1,0 +1,118 @@
+name: CI/CD Workflow
+
+on:
+  push:
+    branches:
+      - main
+      - build/*
+  pull_request:
+    branches:
+      - main
+      - build/*
+
+jobs:
+  setup:
+    name: Checkout Repositories and Setup
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout eConnect Repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          clean: false
+
+      - name: Checkout eConnect-frontend Repository
+        uses: actions/checkout@v4
+        with:
+          repository: zivevo/eConnect-frontend
+          path: frontend
+          token: ${{ secrets.ACCESS_TOKEN }}
+
+      - name: Checkout eConnect-backend Repository
+        uses: actions/checkout@v4
+        with:
+          repository: zivevo/eConnect-backend
+          path: backend
+          token: ${{ secrets.ACCESS_TOKEN }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: setup_artifact
+          path: ./
+
+  docker-compose:
+    name: Docker Compose Setup
+    runs-on: ubuntu-latest
+    needs: setup
+
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: setup_artifact
+          path: ./
+
+      - name: Install Docker Compose
+        run: sudo apt-get update && sudo apt-get install -y docker-compose
+
+      - name: Pull Docker Images
+        run: docker pull oven/bun && docker pull node
+
+      - name: Start Docker Compose
+        run: docker-compose up --build -d
+
+      - name: Wait for Services to be Ready
+        run: sleep 10 
+
+  test-backend:
+    name: Run Tests and Lint Checks
+    runs-on: ubuntu-latest
+    needs: setup
+
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: setup_artifact
+          path: ./
+
+      - name: Install Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Install Dependencies and Run Tests
+        run: cd backend && bun install && bun test
+
+  build-backend:
+    name: Build Backend 
+    runs-on: ubuntu-latest
+    needs: test-backend
+
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: setup_artifact
+          path: ./
+          
+      - name: Install Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Install Dependencies and Build
+        run: cd backend && bun install && bun run build
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: build_artifact
+          path: ./backend/dist
+
+  deploy:
+    name: Deployment 
+    runs-on: ubuntu-latest
+    needs: [ build-backend, docker-compose ]
+
+    steps:
+      - name: Deploy to Environment
+        run: echo "Deploy step goes here"
