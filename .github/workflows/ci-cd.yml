@@ -29,9 +29,6 @@ jobs:
           path: frontend
           token: ${{ secrets.ACCESS_TOKEN }}
 
-      - name : Debug
-        run: ls -la
-
       - name: Checkout eConnect-backend Repository
         uses: actions/checkout@v4
         with:
@@ -44,9 +41,6 @@ jobs:
         with:
           name: setup_artifact
           path: ./
-        
-      - name : Temp 
-        run : ls -la
 
   docker-compose:
     name: Docker Compose Setup
@@ -60,13 +54,7 @@ jobs:
           name: setup_artifact
           path: ./
 
-      - name : Debug
-        run: pwd
-        
-      - name : Debug
-        run: ls -la
-
-      - name: Pull Docker Images
+      - name: Install Docker Compose
         run: sudo apt-get update && sudo apt-get install -y docker-compose
 
       - name: Pull Docker Images
@@ -78,20 +66,24 @@ jobs:
       - name: Wait for Services to be Ready
         run: sleep 10 
 
-  # tests:
-  #   name: Run Tests and Lint Checks
-  #   runs-on: ubuntu-latest
-  #   needs: docker-compose
+  tests:
+    name: Run Tests and Lint Checks
+    runs-on: ubuntu-latest
+    needs: setup
 
-  #   steps:
-  #     - name: Backend Tests
-  #       run: docker-compose exec backend npm test
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: setup_artifact
+          path: ./
 
-  #     - name: Backend Lint
-  #       run: docker-compose exec backend npm run lint
+      - name: Install Bun
+        uses: oven-sh/setup-bun@v2
 
-  #     - name: Frontend Lint
-  #       run: docker-compose exec frontend npm run lint
+      - name: Install Dependencies and Run Tests
+        run: cd backend && bun install && bun test
+
 
   deploy:
     name: Deployment (Optional)
