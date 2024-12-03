@@ -17,21 +17,36 @@ jobs:
 
     steps:
       - name: Checkout eConnect Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          clean: false
 
       - name: Checkout eConnect-frontend Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: zivevo/eConnect-frontend
-          path: eConnect-frontend
+          path: frontend
           token: ${{ secrets.ACCESS_TOKEN }}
 
+      - name : Debug
+        run: ls -la
+
       - name: Checkout eConnect-backend Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: zivevo/eConnect-backend
-          path: eConnect-backend
+          path: backend
           token: ${{ secrets.ACCESS_TOKEN }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: setup_artifact
+          path: ./
+        
+      - name : Temp 
+        run : ls -la
 
   docker-compose:
     name: Docker Compose Setup
@@ -39,8 +54,23 @@ jobs:
     needs: setup
 
     steps:
-      - name: Checkout eConnect Repository
-        uses: actions/checkout@v3
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: setup_artifact
+          path: ./
+
+      - name : Debug
+        run: pwd
+        
+      - name : Debug
+        run: ls -la
+
+      - name: Pull Docker Images
+        run: sudo apt-get update && sudo apt-get install -y docker-compose
+
+      - name: Pull Docker Images
+        run: docker pull oven/bun && docker pull node
 
       - name: Start Docker Compose
         run: docker-compose up --build -d
