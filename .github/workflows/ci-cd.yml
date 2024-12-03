@@ -102,6 +102,12 @@ jobs:
       - name: Install Dependencies and Build
         run: cd backend && bun install && bun run build
 
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: build_artifact
+          path: ./backend/dist
+
   deploy:
     name: Deployment 
     runs-on: ubuntu-latest
