@@ -4,11 +4,15 @@ on:
   push:
     branches:
       - main
+      - develop
       - build/*
   pull_request:
     branches:
       - main
+      - develop
       - build/*
+  repository_dispatch:
+    types: [trigger-gitflow]
 
 jobs:
   setup:
