@@ -1,5 +1,8 @@
+#Repo folders that connect the app
 eConnect-frontend
 eConnect-backend
 frontend
 backend
+
+#Env Files
 .env
