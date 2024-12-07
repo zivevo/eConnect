@@ -11,6 +11,8 @@ on:
       - main
       - develop
       - build/*
+  repository_dispatch:
+    types: [trigger-gitflow]
 
 jobs:
   setup:
